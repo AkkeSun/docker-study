@@ -1,0 +1,33 @@
+
+version: "3.8"                          # docker-compose 사양의 버전 명시 (https://docs.docker.com/compose/compose-file/compose-versioning/)
+
+services:                               # 컨테이너 그룹 선언
+  mariadb:                              # 컨테이너 하위그룹 선언
+    image: 'mariadb'                    # 컨테이너를 실행할 이미지명
+    container_name: 'mariadb'           # 컨테이너명
+    volumes:                            # 볼륨 지정
+      - mariadb-volume:/var/lib/mysql
+      - ./mariadb/conf.d:/etc/mysql/conf.d
+      - ./mariadb/initdb.d:/docker-entrypoint-initdb.d
+    env_file:                            # 환경변수 지정 (file type)
+      - mariadb/mairadb.env
+    ports:                              # 포트설정 (Local:Container)
+      - '3306:3306'
+    # environment:                      # 환경변수 설정 (직접입력 타입, 두 개의 입력 타입 지원)
+      # - MYSQL_ROOT_PASSWORD=root
+      # MYSQL_ROOT_PASSWORD: root
+    # networks:                         # 네트워크 설정 (같은 compose 내의 컨테이너는 자동으로 네트워크가 맺어지기 때문에 생략 가능)
+    #  - mariadb-net
+
+  api:
+    build: ./application                # docker-compose 실행시 build 할 Dockerfile 위치
+    container_name: 'myapp'
+    volumes:
+      - ./log:/data/application/log
+    ports:
+      - '8080:8080'
+    depends_on:
+      - mariadb                         # 해당 컨테이너가 실행된 후에 작업 진행
+
+volumes:                                # 각각의 컨테이너에서 사용할 named volume 을 모두 작성해준다 (실행시 자동 생성됨)
+  mariadb-volume:

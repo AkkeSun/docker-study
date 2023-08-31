@@ -1,0 +1,17 @@
+
+logging:
+  config: classpath:logback.xml
+
+spring:
+  datasource:
+    url: jdbc:mariadb://mariadb:3306/test
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: root
+    password: root
+  jpa:
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: none
